@@ -1,6 +1,6 @@
 # LLM-GNN_alignment
 
-This repo is about we want to find out if we can align the representation of a protein text description from LLMs and representation of a protein graph from GNNs, if the text description and graph are about the same protein. Therefore, in our experiments we trained two linear layer of projection heads, one for the GNNs and one for the LLMs. The 
+This repo is about we want to find out if we can align the representation of a protein text description from LLMs and representation of a protein graph from GNNs, if the text description and graph are about the same protein. Therefore, in our experiments we trained two linear layer of projection heads, one for the GNNs and one for the LLMs. Both of the projection heads will have the exact same structure, with one simple linear layer. The purpose of the projection layer is to align the GNNs representaion to the same dimension of LLMs representation.
 
 Below code suppose to use one linear layer to convert the protein representation dimension (1, 3072) to the same as the word representation dimension (2304,), which becomes (1, 2304) after unsqueeze(0). 
 The code will also train the linear layer with contrastive loss function, so that the cosine similarity of positive protein and word pair will maximize to 1, also the cosine similarity of negative protein and word pair will be close to 0 (not to -1 since I want negative pairs have no relation at all. ). 
