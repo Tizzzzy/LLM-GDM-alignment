@@ -42,7 +42,7 @@ What kind of model pairs (a LLM and a GNN), have better alignment:
 We want to analyze the influence of different dimensional size of a fixed model pairs on the alignment.
 1. We choose Gearnet and Gemma2
 2. Originally Gearnet has dimension of `3072` since this GNN contains six 512 hidden layers.
-3. Therefore, we need to train the Gearnet from the start. We choose the the retrain hidden layer size of `[512]`, `[512, 512]`, `[512, 512, 512]`, `[512, 512, 512, 512]`, `[512, 512, 512, 512, 512]`. These retrianed model will give us dimension of 512, 1024, 1536, 2048, 2560.
+3. Therefore, we need to train the Gearnet from the start. We choose the the retrain hidden layer size of `[64]`, `[128]`, `[256]`, `[512]`, `[512, 512]`. For a fair comparison, we also retrained the original hidden layer size `[512, 512, 512, 512, 512, 512]` using the same training data. These retrianed model will give us dimension of 64, 128, 256, 512, 1024, 3072. The training code is in `train_gearnet.py`.
 4. Then we use the same steps above to train the projection head of Gearnet and Gemma2. Then use `metric` to calculate how well does the projection head does.
 
 
