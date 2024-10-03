@@ -45,5 +45,12 @@ We want to analyze the influence of different dimensional size of a fixed model 
 3. Therefore, we need to train the Gearnet from the start. We choose the the retrain hidden layer size of `[64]`, `[128]`, `[256]`, `[512]`, `[512, 512]`. For a fair comparison, we also retrained the original hidden layer size `[512, 512, 512, 512, 512, 512]` using the same training data. These retrianed model will give us dimension of 64, 128, 256, 512, 1024, 3072. The training code is in `train_gearnet.py`.
 4. Then we use the same steps above to train the projection head of Gearnet and Gemma2. Then use `metric` to calculate how well does the projection head does.
 
+## Research Question 5:
+In the previous experiment, for each projection head, we only used one linear layer. Therefore, we are wondering does multiple linear layers improve the alignment performance.
+We conduct 2 layers and 3 layers, the code is in `projection_head` folder, and you need to run `multi_layer` version.
 
+## Research Question 6:
+Previously, the LLMs are directly load from huggingface. It is raw version without any finetuning. Therefore, we are wonding whether a protein version of LLMs will help the alignment score.
+1. We choose `llama3.1-8B` to finetune. The training data is the same as the data `summarize.py` output. The finetune code is in `finetune_llama31.py`
+2. After finetuned, you need to use the previous step to get representation of each protein. Then train the projection head, then use metric to check the performance.
 
