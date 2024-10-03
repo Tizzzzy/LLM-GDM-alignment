@@ -24,17 +24,26 @@ What kind of model pairs (a LLM and a GNN), have better alignment:
 2. AFter we trained the projection head, we need to use metric to calculate how well is our projection head. The metric is in `metric` folder. The higher the score, means better the alignments
 
 ## Research Question 2:
+1. After we got the each model's pair alignment performance, we can also calculate the pearson correlation of accross different model pairs. The code is in `pearson_correlation` folder.
+   -- First you have to use previously trained projection heads to calculate the each proteins alignment score using `rank_similarity_(model_pair).py`.
+   -- After you get the alignment score for each protein, we can run the correlation using `correlation.py`
+
+## Research Question 3:
+1. One of the main reason why we are doing the alignment experiment is to analyze what kind of protein will have high alignment score between the model pair. Is there any feature in a protein will affect the alignment score?
+2. We conduct experiments in three angle:
+   -- Amino acids sequence length:
+      -- Use the `sequence_length_check.ipynb` to analyze whether sequence length will affect the alignment score. Here we show the answer is NO.
+   -- Protein's rareness:
+      -- Use the `rareness_check.ipynb` to analyze whether protein's rareness will affect the alignment score. Here the answer is YES.
+   -- Number of Chains:
+      -- Use the `count_chains.ipynb` to analyze whether protein's number of chains will affect the alignment score. Here the answer is NO.
+
+## Research Question 4:
 We want to analyze the influence of different dimensional size of a fixed model pairs on the alignment.
 1. We choose Gearnet and Gemma2
 2. Originally Gearnet has dimension of `3072` since this GNN contains six 512 hidden layers.
 3. Therefore, we need to train the Gearnet from the start. We choose the the retrain hidden layer size of `[512]`, `[512, 512]`, `[512, 512, 512]`, `[512, 512, 512, 512]`, `[512, 512, 512, 512, 512]`. These retrianed model will give us dimension of 512, 1024, 1536, 2048, 2560.
 4. Then we use the same steps above to train the projection head of Gearnet and Gemma2. Then use `metric` to calculate how well does the projection head does.
 
-
-## Research Question 3:
-
-## Research Question 4:
-
-1. After we got the performance, we can also calculate the pearson correlation of accross different projection head. The code is in `pearson_correlation` folder.
 
 
