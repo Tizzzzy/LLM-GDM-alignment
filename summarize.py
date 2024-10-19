@@ -2,7 +2,7 @@ from openai import OpenAI
 import json
 import os
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="sk-")
 
 def gpt_query(protein_id, fasta_text, temp):
     MODEL="gpt-4o"
