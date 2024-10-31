@@ -109,13 +109,20 @@ All related code is organized in the `projection_head` folder, which contains su
 - `projection_head_{GDM}_gemma2_multilayer.py:` Trains projection heads for a model pair with Gemma2 2B as the LLM, incorporating one or two additional linear layers in the DGM projection head.
 
 ### Output
-Running these scripts will generate a saved projection head model at `best_protein_proj_head_{DGM}_{LLM}.pth`. These projection heads are crucial for evaluating the alignment quality between the DGM and LLM representations.
+Running these scripts will generate a saved projection head model for GDM at `best_protein_proj_head_{DGM}_{LLM}.pth`, and a saved projection head model for LLM at `best_token_proj_head_{DGM}_{LLM}.pth`. These projection heads are crucial for evaluating the alignment quality between the DGM and LLM representations.
 
 
 ## Research Question 1:
-What kind of model pairs (a LLM and a GNN), have better alignment:
-1. After we got the representation from both LLM and GNN. we need to train projection head to align the graph representation with text representation. The code is in `projection_head` folder.
-2. AFter we trained the projection head, we need to use metric to calculate how well is our projection head. The metric is in `metric` folder. The higher the score, means better the alignments
+Which LLM-GDM model pairs demonstrate the best alignment performance?
+
+To evaluate the alignment performance of the LLM-DGM model pairs after training the projection heads, we use a dedicated metric. The code for this metric is located in the `metric` folder. A higher alignment score indicates better performance between a given model pair.
+
+### Structure
+The `metric` folder is organized similarly to the `projection_head` folder, with four subfolders named after each DGM. Each subfolder contains four scripts, each tailored to evaluate a specific model pairing (an LLM and a DGM).
+
+### Evaluation
+- Each script uses the projection heads trained in the `Representation Alignment` section.
+- The output is a score ranging from [-1, 1], where a higher score indicates better alignment between the representations of the model pair.
 
 ## Research Question 2:
 1. After we got the each model's pair alignment performance, we can also calculate the pearson correlation of accross different model pairs. The code is in `pearson_correlation` folder.
