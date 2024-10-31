@@ -37,25 +37,12 @@ gearnet_edge.load_state_dict(net)
 
 json_file_path = "../workspace_data/protein_summaries.json"
 output_json_path = "../workspace_data/protein_representations_gearnet.json"
-temp_path = "../workspace_data/protein_representations.json"
 
 with open(json_file_path, 'r') as json_file:
     protein_datas = json.load(json_file)
 
 protein_representations = {}
 count = 0
-
-if os.path.exists(temp_path):
-    with open(temp_path, 'r') as json_file:
-        protein_representations = json.load(json_file)
-
-    protein_representations = {
-        key: {"graph_feature": value['graph_feature']} 
-        for key, value in protein_representations.items() 
-        if 'graph_feature' in value
-    }
-    first_item = list(protein_representations.items())[0]
-    print(first_item)
 
 for protein_id, summary in protein_datas.items():
 
