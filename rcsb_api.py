@@ -45,7 +45,7 @@ def fetch_all_pdb_ids():
 
     return pdb_ids
 
-# # Step 2: Randomly Select 1000 PDB IDs
+# # Step 2: Randomly Select 20000 PDB IDs
 def select_random_pdb_ids(pdb_ids, number):
     return random.sample(pdb_ids[:], number)
 
@@ -90,8 +90,8 @@ if __name__ == "__main__":
 
     print(f"Total PDB IDs fetched: {len(all_pdb_ids)}")
 
-    print("Selecting 1000 random PDB IDs...")
-    selected_pdb_ids = select_random_pdb_ids(all_pdb_ids, 10000)
+    print("Selecting 20000 random PDB IDs...")
+    selected_pdb_ids = select_random_pdb_ids(all_pdb_ids, 20000)
 
     print("Downloading selected FASTA and PDB files...")
     download_fasta_and_pdb_files(selected_pdb_ids)
