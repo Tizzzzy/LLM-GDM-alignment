@@ -22,6 +22,9 @@ cd LLM-DGM-alignment
 # create a conda environment with python 3.10 or higher recommended
 conda create -n LLM-DGM-alignment python == 3.10.12
 
+# based on your CUDA version, install pytorch from https://pytorch.org/
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+
 pip install -r requirements.txt
 ```
 
