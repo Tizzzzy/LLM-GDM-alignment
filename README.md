@@ -43,16 +43,29 @@ or
 
 ## Preprocess:
 
-1. Use `rcsb_api.py` to download all protein pdb and fasta files from rcsb.
-2. Use `summarize.py` to use GPT-4 to summarize each protein fasta information into text format. So we can get the protein representation from LLM later
+1. Use `rcsb_api.py` to download 20,000 protein pdb and fasta files from rcsb (You can download more if your want). You should get a folder named `content/protein_files`.
+3. Use `summarize.py` to use regular expression and GPT-4o to summarize each protein fasta information into text description. So we can get the protein representation from LLM later. You should get a json file named `protein_summaries.json`.
 
 ## Representation:
-1. From `Preprocess`, we have protein's pdb files and text descriptions. Then we will use pdb file for GNN, and text description for LLM.
-2. For text representation from LLM:
-   -- Feed the previous protein text descriptions into LLM and get the representation from the last layer.
-3. For graph representation from GNN:
+1. From `Preprocess`, we have protein's pdb files and text descriptions. Then we will use pdb files for GNN, and text description for LLM.
+2. Get text representation from LLM:
+   -- Feed the protein text descriptions (`protein_summaries.json`) into LLM and get the representation from the last layer.
+   -- The code is in path `LLM-DGM-alignment/representation`. And you can run code with name `representation_{LLM}.py`
+4. For graph representation from GNN:
    -- Each GNN models requires different input format. But the main idea is that, we either directly feed the protein pdb files into the model or we first convert the pdb files into some sort of graph information data, and then feed into the GNN. Then we will get the representation of the protein from the model.
-4. Both modality representation code is in `representation` folder. 
+   -- For GearNet, it support PDB file directly, so you can directly run code `representation_gearnet.py`. However, before you run the code, make sure you create a conda environment and download their pretrained model directly from their GitHub repo [here](https://github.com/DeepGraphLearning/GearNet). In our study, we downloaded their `angle_gearnet_edge` model. After you run it, you should get a json file named `protein_representations_gearnet.json` with all the graph representations from GearNet.
+   -- For ScanNet, it also support PDB file directly. Before you start, go to [ScanNet](https://github.com/jertubiana/ScanNet) Github repo, and install all their environment, and clone their repo. Then change their `predict_features.py`, with our `predict_features.py` in `representation/ScanNet/` folder. After you run it, you should get a json file named `protein_representations_scannet.json` with all the graph representations from ScanNet.
+   -- For GVP, it doesn't support PDB file. Before you start, go to [GVP](https://github.com/drorlab/gvp) Github Repo, and install all their environment. You don't need to clone their repo, as we already include it in folder `representation/GVP/`. As you can see in their repo, we first need to convert the PDB file into a json format like this:
+```
+[
+    {
+        "seq": "TQDCSFQHSP...",
+        "coords": [[[74.46, 58.25, -21.65],...],...]
+    }
+    ...
+]
+```
+Therefore, we need to run `pdb_to_json.py` to convert the PDB file to json. After you run it, you should get a json file named `pdb_json.json`. 
 
 ## Research Question 1:
 What kind of model pairs (a LLM and a GNN), have better alignment:
