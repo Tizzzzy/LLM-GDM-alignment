@@ -51,12 +51,7 @@ for protein_id, summary in protein_datas.items():
         continue
 
   # 把pdb representation搞到手
-    pdb_file1 = f"../content/protein_files/pdb/{protein_id}.pdb"
-    pdb_file2 = f"../workspace/content2/protein_files/pdb/{protein_id}.pdb"
-    if os.path.exists(pdb_file1):
-        pdb_file = pdb_file1
-    else:
-        pdb_file = pdb_file2
+    pdb_file = f"../content/protein_files/pdb/{protein_id}.pdb"
     try:
         protein = Protein.from_pdb(pdb_file, atom_feature="position", bond_feature="length", residue_feature="symbol")
         _protein = Protein.pack([protein])
