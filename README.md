@@ -43,29 +43,74 @@ or
 
 ## Preprocess:
 
-1. Use `rcsb_api.py` to download 20,000 protein pdb and fasta files from rcsb (You can download more if your want). You should get a folder named `content/protein_files`.
-3. Use `summarize.py` to use regular expression and GPT-4o to summarize each protein fasta information into text description. So we can get the protein representation from LLM later. You should get a json file named `protein_summaries.json`.
+1. **Download Protein Files:**
+   - Use `rcsb_api.py` to download 20,000 (or more) protein PDB and FASTA files from RCSB.
+   - The downloaded files will be saved in `content/protein_files`.
 
-## Representation:
-1. From `Preprocess`, we have protein's pdb files and text descriptions. Then we will use pdb files for GNN, and text description for LLM.
-2. Get text representation from LLM:
-   -- Feed the protein text descriptions (`protein_summaries.json`) into LLM and get the representation from the last layer.
-   -- The code is in path `LLM-DGM-alignment/representation`. And you can run code with name `representation_{LLM}.py`
-4. For graph representation from GNN:
-   -- Each GNN models requires different input format. But the main idea is that, we either directly feed the protein pdb files into the model or we first convert the pdb files into some sort of graph information data, and then feed into the GNN. Then we will get the representation of the protein from the model.
-   -- For GearNet, it support PDB file directly, so you can directly run code `representation_gearnet.py`. However, before you run the code, make sure you create a conda environment and download their pretrained model directly from their GitHub repo [here](https://github.com/DeepGraphLearning/GearNet). In our study, we downloaded their `angle_gearnet_edge` model. After you run it, you should get a json file named `protein_representations_gearnet.json` with all the graph representations from GearNet.
-   -- For ScanNet, it also support PDB file directly. Before you start, go to [ScanNet](https://github.com/jertubiana/ScanNet) Github repo, and install all their environment, and clone their repo. Then change their `predict_features.py`, with our `predict_features.py` in `representation/ScanNet/` folder. After you run it, you should get a json file named `protein_representations_scannet.json` with all the graph representations from ScanNet.
-   -- For GVP, it doesn't support PDB file. Before you start, go to [GVP](https://github.com/drorlab/gvp) Github Repo, and install all their environment. You don't need to clone their repo, as we already include it in folder `representation/GVP/`. As you can see in their repo, we first need to convert the PDB file into a json format like this:
-```
-[
-    {
-        "seq": "TQDCSFQHSP...",
-        "coords": [[[74.46, 58.25, -21.65],...],...]
-    }
-    ...
-]
-```
-Therefore, we need to run `pdb_to_json.py` to convert the PDB file to json. After you run it, you should get a json file named `pdb_json.json`. 
+2. **Summarize Protein Information:**
+   - Use `summarize.py` to generate text descriptions for each protein based on its FASTA file using regular expressions and GPT-4.
+   - This will create a JSON file named `protein_summaries.json` containing summarized text descriptions.
+
+---
+
+## Representation Extraction:
+
+### Overview
+From the preprocessing step, we have protein PDB files and corresponding text descriptions. These will be used as follows:
+- **DGM**: Feed PDB files to obtain graph-based representations.
+- **LLM**: Feed Text descriptions to obtain text-based representations.
+
+### 1. Text Representation using LLMs
+- **Input**: `protein_summaries.json` containing text descriptions.
+- **Process**: Feed these descriptions into an LLM and extract representations from the last layer.
+- **Script**: Use the scripts in `LLM-DGM-alignment/representation` and run `representation_{LLM}.py`.
+
+### 2. Graph Representation using DGMs
+- Different DGM models require specific input formats. Below are the instructions for each model:
+
+#### GearNet
+- **Support**: Directly accepts PDB files.
+- **Setup**: Create a conda environment and download the pre-trained `angle_gearnet_edge` model from the [GearNet GitHub repository](https://github.com/DeepGraphLearning/GearNet).
+- **Script**: Run `representation_gearnet.py` to get graph representations.
+- **Output**: `protein_representations_gearnet.json` with all the graph representations from GearNet.
+
+#### ScanNet
+- **Support**: Directly accepts PDB files.
+- **Setup**: Clone and install dependencies from the [ScanNet GitHub repository](https://github.com/jertubiana/ScanNet). Replace `predict_features.py` in their repo with the version provided in `representation/ScanNet/predict_features.py`.
+- **Script**: Run `predict_features.py` to generate representations.
+- **Output**: `protein_representations_scannet.json` with all the graph representations from ScanNet.
+
+#### GVP
+- **Support**: Does not accept PDB files directly.
+- **Setup**: Install dependencies from the [GVP GitHub repository](https://github.com/drorlab/gvp). The modified code is provided in `representation/GVP/`.
+- **Preprocessing**: Use `pdb_to_json.py` to convert PDB files into JSON format.
+  - **Output**: `pdb_json.json`.
+- **Script**: Run `models.py` in `representation/GVP/src/` to obtain graph representations.
+- **Output**: `representation_gvp.json` with all the graph representations from GVP.
+
+#### GAT
+- **Support**: Does not accept PDB files directly.
+- **Setup**: Install dependencies from the [GAT GitHub repository](https://github.com/PetarV-/GAT/tree/master). The modified code is provided in `representation/GAT/`.
+- **Script**: Run `representation_gat.py`. This script will automatically convert PDB files into node features and graph structures for the GAT model.
+- **Output**: `protein_representations_gat.json` with all the graph representations from GAT.
+
+## Representation Alignment:
+
+### Overview
+Once we have obtained the text and graph representations for proteins from the LLMs and DGMs, we can proceed to train the projection head. The purpose of the projection head is to map these representations, which may have different dimensions, into a unified representation space. For instance, if a graph representation has a dimension of [1, 3072] and a text representation has a dimension of [1, 2304], the projection head will align both into the same space, such as [1, 2304].
+
+### Structure
+All related code is organized in the `projection_head` folder, which contains subfolders named after each DGM. Each of these subfolders includes four scripts, each designed for a specific model pairing (an LLM and a DGM). The goal is to train two projection heads for each model pair: one for the LLM and another for the DGM. Initially, we use a single linear layer for the projection head design, but we also experiment with adding one or two additional linear layers to the DGM projection head.
+
+### Code Details
+- `projection_head_{GDM}_gemma2.py:` Trains projection heads for a model pair that includes Gemma2 2B as the LLM.
+- `projection_head_{GDM}_llama31_8B.py:` Trains projection heads for a model pair with LLaMa3.1 8B as the LLM.
+- `projection_head_{GDM}_llama31_70B.py:` Trains projection heads for a model pair with LLaMa3.1 70B as the LLM.
+- `projection_head_{GDM}_gemma2_multilayer.py:` Trains projection heads for a model pair with Gemma2 2B as the LLM, incorporating one or two additional linear layers in the DGM projection head.
+
+### Output
+Running these scripts will generate a saved projection head model at `best_protein_proj_head_{DGM}_{LLM}.pth`. These projection heads are crucial for evaluating the alignment quality between the DGM and LLM representations.
+
 
 ## Research Question 1:
 What kind of model pairs (a LLM and a GNN), have better alignment:
