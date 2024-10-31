@@ -2,8 +2,43 @@
 
 This repo is about we want to find out if we can align the representation of a protein text description from LLMs and representation of a protein graph from GNNs, if the text description and graph are about the same protein. Therefore, in our experiments we trained two linear layer of projection heads, one for the GNNs and one for the LLMs. Both of the projection heads will have the exact same structure, with one simple linear layer. The purpose of the projection layer is to align the GNNs representaion to the same dimension of LLMs representation. Then the process of training wil maximize the cosine similarity of two representations of the same protein from different modality to 1. At the same time minimize the cosine similarity between two representation that from different proteins to 0 (not to -1 since -1 means negative relationship between two representations).
 
-## Requirement:
+# Requesting model access from META
+## 1. Requesting model access from Google
+visit this [link](https://ai.google.dev/gemma) and request the access to the Gemma-7B model. 
 
+## 2. Requesting model access from Hugging Face
+Once request is approved, use the same email adrress to get the access of the model from HF [here](https://huggingface.co/google/gemma-7b).
+
+Once both requests are approved, follow the below directions.
+
+# Setup
+
+## 1. Environment preparation
+```python
+git clone https://github.com/Tizzzzy/LLM-DGM-alignment.git
+
+cd LLM-DGM-alignment
+
+pip install git+https://github.com/huggingface/transformers
+
+# python 3.10 or higher recommended
+pip install -r requirements.txt
+
+huggingface-cli login
+```
+
+## 2. Authorising HF token
+Once HF request to access the model has been approved, create hugging face token [here](https://huggingface.co/settings/tokens)
+
+Run below code and enter your token. It will authenticate your HF account
+```python
+>>> huggingface-cli login
+
+or
+
+>>> from huggingface_hub import login
+>>> login(YOUR_HF_TOKEN)
+```
 
 ## Preprocess:
 
