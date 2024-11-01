@@ -1,6 +1,28 @@
 # LLM-GNN_alignment
 
-This repo is about we want to find out if we can align the representation of a protein text description from LLMs and representation of a protein graph from GNNs, if the text description and graph are about the same protein. Therefore, in our experiments we trained two linear layer of projection heads, one for the GNNs and one for the LLMs. Both of the projection heads will have the exact same structure, with one simple linear layer. The purpose of the projection layer is to align the GNNs representaion to the same dimension of LLMs representation. Then the process of training wil maximize the cosine similarity of two representations of the same protein from different modality to 1. At the same time minimize the cosine similarity between two representation that from different proteins to 0 (not to -1 since -1 means negative relationship between two representations).
+This includes an original implementation of "[Exploring the Alignment Landscape: LLMs and Geometric Deep Models in Protein Representation][]" by [Dong Shu](https://scholar.google.com/citations?user=KfIlTroAAAAJ&hl=en), [Bingbing Duan](https://www.biology.pitt.edu/person/bingbing-duan), [Kai Guo](https://scholar.google.com/citations?user=v6jYru8AAAAJ), [Kaixiong Zhou](https://kaixiong-zhou.github.io/), [Jiliang Tang](https://www.cse.msu.edu/~tangjili/), [Mengnan Du](https://mengnandu.com/).
+
+## Abstract
+
+Latent representation alignment has become a foundational technique for constructing multimodal large language models (MLLM) by mapping embeddings from different modalities into a shared space, often aligned with the embedding space of large language models (LLMs) to enable effective cross-modal understanding. While preliminary protein-focused MLLMs have emerged, they have predominantly relied on heuristic approaches, lacking a fundamental understanding of optimal alignment practices across representations. In this study, we explore the alignment of multimodal representations between LLMs and Geometric Deep Models (GDMs) in the protein domain. We comprehensively evaluate three state-of-the-art LLMs (Gemma2-2B, LLaMa3.1-8B, and LLaMa3.1-70B) with four protein-specialized GDMs (GearNet, GVP, ScanNet, GAT). Our work examines alignment factors from both model and protein perspectives, identifying challenges in current alignment methodologies and proposing strategies to improve the alignment process. Our key findings reveal that GDMs incorporating both graph and 3D structural information align better with LLMs, larger LLMs demonstrate improved alignment capabilities, and protein rarity significantly impacts alignment performance. We also find that increasing GDM embedding dimensions, using two-layer projection heads, and fine-tuning LLMs on protein-specific data substantially enhance alignment quality. These strategies offer potential enhancements to the performance of protein-related multimodal models.
+
+## Our Findings
+1. We found that GDMs integrating both graph and 3D structural information of proteins tend to align better with LLMs. 
+2. Larger LLMs with higher embedding dimensions showed improved alignment performance with the same GDM.
+3. Our analysis revealed strong correlations between high-alignment model pairs and other high-alignment pairs.
+4. Notably, the rarity of a protein significantly affects the model's alignment performance, with rare proteins posing greater challenges.
+5. We highlight the challenges and limitations of current protein datasets for representation alignment, particularly due to unequal levels of study across proteins and the presence of homologous relationships among them.
+6. In terms of model architecture, we discovered that retraining GDMs to have higher embedding dimensions enhances alignment with LLMs.
+7. The complexity of the projection head also plays a crucial role, as increasing the number of layers improves alignment up to a certain threshold, beyond which benefits diminish.
+8. Finally, we found that fine-tuning LLMs with protein-specific data can significantly improve alignment with GDMs.
+
+Please leave issues for any questions about the paper or the code.
+
+If you find our code or paper useful, please cite the paper ✨:
+```
+```
+
+![image](https://github.com/user-attachments/assets/f785c1ea-e7ba-4d65-9cd8-77b135766ebe)
 
 # Setup
 
@@ -125,33 +147,88 @@ The `metric` folder is organized similarly to the `projection_head` folder, with
 - The output is a score ranging from [-1, 1], where a higher score indicates better alignment between the representations of the model pair.
 
 ## Research Question 2:
-1. After we got the each model's pair alignment performance, we can also calculate the pearson correlation of accross different model pairs. The code is in `pearson_correlation` folder.
-   -- First you have to use previously trained projection heads to calculate the each proteins alignment score using `rank_similarity_(model_pair).py`.
-   -- After you get the alignment score for each protein, we can run the correlation using `correlation.py`
+Is there a correlation between different model pairs?
+
+To determine whether there is a relationship between the alignment performances of different model pairs, we calculate the Pearson correlation. The code for this analysis is located in the `pearson_correlation` folder. A higher correlation score indicates that the alignment performances of two model pairs are more similar.
+
+### Steps to Calculate Correlation
+1. Compute Alignment Scores:
+   - Use the previously trained projection heads to calculate alignment scores for each protein’s graph and text representation.
+   - Run `rank_similarity_(model_pair).py` for each model pair to generate these scores.
+2. Calculate Correlation:
+   - Once you have the alignment scores for all proteins, use `correlation.py` to compute the Pearson correlation between different model pairs.
 
 ## Research Question 3:
-1. One of the main reason why we are doing the alignment experiment is to analyze what kind of protein will have high alignment score between the model pair. Is there any feature in a protein will affect the alignment score?
-2. We conduct experiments in three angle:
-   -- Amino acids sequence length:
-      -- Use the `sequence_length_check.ipynb` to analyze whether sequence length will affect the alignment score. Here we show the answer is NO.
-   -- Protein's rareness:
-      -- Use the `rareness_check.ipynb` to analyze whether protein's rareness will affect the alignment score. Here the answer is YES.
-   -- Number of Chains:
-      -- Use the `count_chains.ipynb` to analyze whether protein's number of chains will affect the alignment score. Here the answer is NO.
+What types of proteins align well across all model pairs, and which do not?
+
+A key objective of our alignment experiments is to identify the characteristics of proteins that result in high or low alignment scores across different model pairs. We explore whether specific protein features influence alignment performance.
+
+### Experimental Analysis
+We conduct our investigation from three perspectives:
+1. Amino Acid Sequence Length:
+   - Use `sequence_length_check.ipynb` to analyze the impact of sequence length on alignment scores.
+   - Finding: Sequence length does not significantly affect alignment scores.
+
+2. Protein Rarity:
+   - Use `rareness_check.ipynb` to explore whether the rarity of a protein influences alignment performance.
+   - Finding: Rarity has a notable impact on alignment scores, with rarer proteins generally aligning less well.
+
+3. Number of Chains:
+   - Use `count_chains.ipynb` to examine the effect of the number of protein chains on alignment scores.
+   - Finding: The number of chains does not significantly affect alignment scores.
 
 ## Research Question 4:
-We want to analyze the influence of different dimensional size of a fixed model pairs on the alignment.
-1. We choose Gearnet and Gemma2
-2. Originally Gearnet has dimension of `3072` since this GNN contains six 512 hidden layers.
-3. Therefore, we need to train the Gearnet from the start. We choose the the retrain hidden layer size of `[64]`, `[128]`, `[256]`, `[512]`, `[512, 512]`. For a fair comparison, we also retrained the original hidden layer size `[512, 512, 512, 512, 512, 512]` using the same training data. These retrianed model will give us dimension of 64, 128, 256, 512, 1024, 3072. The training code is in `train_gearnet.py`.
-4. Then we use the same steps above to train the projection head of Gearnet and Gemma2. Then use `metric` to calculate how well does the projection head does.
+Does increasing the GDM dimension improve alignment performance?
+
+To investigate whether higher-dimensional graph representations improve alignment performance, we use the GearNet model as our GDM for evaluation.
+
+### Experimental Setup
+GearNet’s original architecture has a dimensionality of `3072`, achieved through six hidden layers of size `512`. For our study, we retrain GearNet from scratch with varying hidden layer sizes to explore different output dimensions:
+
+- Hidden Layer Configurations: [64], [128], [256], [512], [512, 512], and [512, 512, 512, 512, 512, 512] (the original configuration).
+- These configurations yield output dimensions of 64, 128, 256, 512, 1024, and 3072, respectively. We stop at [512, 512, 512, 512, 512, 512] as it matches GearNet’s original setup.
+
+### Implementation
+- The training code is in `train_gearnet.py`. By default, `hidden_dims` is set to [512, 512]. To modify the hidden layer sizes, adjust the `hidden_dims=[]` parameter as needed.
+- After retraining GearNet with the new dimensions, please follow the same steps to generate protein graph representations, train the projection heads for the retrained GearNet and Gemma2, and then use the `metric` to evaluate alignment performance.
 
 ## Research Question 5:
-In the previous experiment, for each projection head, we only used one linear layer. Therefore, we are wondering does multiple linear layers improve the alignment performance.
-We conduct 2 layers and 3 layers, the code is in `projection_head` folder, and you need to run `multi_layer` version.
+Does adding layers to the GDM’s projection head enhance alignment performance?
+
+Previously, we used a single linear layer for the projection head. This raises the question: does using multiple linear layers improve alignment performance between model pairs?
+
+### Experiment Setup
+We extend the projection head to include two-layer and three-layer configurations. The code for these multi-layer projection heads can be found in the `projection_head` folder. To run these experiments, use the `multilayer` versions of the scripts. By default, the LLM model used is Gemma2 2B, but you can easily switch to other LLM models as desired.
+
+### Evaluation
+After training the multi-layer projection heads, follow the same evaluation steps as before to measure alignment performance. This experiment helps us understand whether a more complex projection head architecture leads to better alignment results.
+
 
 ## Research Question 6:
-Previously, the LLMs are directly load from huggingface. It is raw version without any finetuning. Therefore, we are wonding whether a protein version of LLMs will help the alignment score.
-1. We choose `llama3.1-8B` to finetune. The training data is the same as the data `summarize.py` output. The finetune code is in `finetune_llama31.py`
-2. After finetuned, you need to use the previous step to get representation of each protein. Then train the projection head, then use metric to check the performance.
+Does fine-tuning an LLM on protein data enhance alignment performance?
 
+Initially, the LLMs used in our experiments were loaded from Hugging Face in their raw, pre-trained versions without any fine-tuning. We hypothesize that fine-tuning these LLMs on protein-specific domain knowledge could improve alignment scores.
+
+### Fine-Tuning Setup
+We provide training code for fine-tuning `LLaMa3.1 8B` in the `finetune_llama31.py` script. The training data consists of the text descriptions from `protein_summaries.json`, generated using `summarize.py`. If you wish to fine-tune other LLMs, you can do so with simple modifications to the provided script.
+
+### Evaluation
+After fine-tuning, follow these steps:
+1. Obtain protein text representations using the fine-tuned LLM.
+2. Train the projection heads as before.
+3. Use the metric to evaluate the alignment performance and analyze the impact of fine-tuning.
+
+# Suggestions for Developing Multimodal LLMs
+Our findings from `Research Questions 4-6` provide important insights for the design of future multimodal LLMs in the protein domain. We discovered that GDMs which incorporate both graph and 3D structural information of proteins demonstrate superior alignment with LLMs, suggesting future designs should prioritize models capable of capturing these multidimensional protein representations. The complex relationships between different proteins must be carefully considered during the alignment process to avoid oversimplified mappings that fail to capture subtle protein interactions. Our research also revealed that higher-dimensional embeddings in LLMs contribute to better alignment by capturing richer semantic information, indicating that increasing the capacity of the LLM's embedding space can enhance overall performance. When designing projection heads, we found that a two-layer architecture offers the optimal balance between simplicity and performance, as additional layers provide diminishing returns. Furthermore, fine-tuning LLMs with domain-specific data, such as protein descriptions, significantly improves alignment with GDMs, highlighting the importance of customizing LLMs to better understand the intricacies of the protein domain for more effective cross-modal integration.
+
+### 📞 Contact
+
+If you have any question or suggestion related to this project, feel free to open an issue or pull request.
+
+### ✨ Citation
+
+If you find this repository useful, please consider giving a star ⭐ and citation
+
+```
+
+```
