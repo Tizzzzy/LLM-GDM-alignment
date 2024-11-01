@@ -1,2 +1,5 @@
 torchdrug
 transformers
+datasets
+peft
+trl
