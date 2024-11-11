@@ -1,5 +1,5 @@
 import huggingface_hub
-huggingface_hub.login("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")
+huggingface_hub.login("hf_")
 import sys
 import argparse
 import os
