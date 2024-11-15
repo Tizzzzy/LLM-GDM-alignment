@@ -1,6 +1,8 @@
-# LLM-GNN_alignment
+# LLM-GDM-alignment
 
-This includes an original implementation of "[Exploring the Alignment Landscape: LLMs and Geometric Deep Models in Protein Representation][]" by [Dong Shu](https://scholar.google.com/citations?user=KfIlTroAAAAJ&hl=en), [Bingbing Duan](https://www.biology.pitt.edu/person/bingbing-duan), [Kai Guo](https://scholar.google.com/citations?user=v6jYru8AAAAJ), [Kaixiong Zhou](https://kaixiong-zhou.github.io/), [Jiliang Tang](https://www.cse.msu.edu/~tangjili/), [Mengnan Du](https://mengnandu.com/).
+This includes an original implementation of "[Exploring the Alignment Landscape: LLMs and Geometric Deep Models in Protein Representation](https://arxiv.org/pdf/2411.05316)" by [Dong Shu](https://scholar.google.com/citations?user=KfIlTroAAAAJ&hl=en), [Bingbing Duan](https://www.biology.pitt.edu/person/bingbing-duan), [Kai Guo](https://scholar.google.com/citations?user=v6jYru8AAAAJ), [Kaixiong Zhou](https://kaixiong-zhou.github.io/), [Jiliang Tang](https://www.cse.msu.edu/~tangjili/), [Mengnan Du](https://mengnandu.com/).
+
+[[Paper](https://arxiv.org/pdf/2411.05316)] | [[Website](https://tizzzzy.github.io/LLM-GDM-alignment.github.io/)]
 
 ## Abstract
 
@@ -20,6 +22,12 @@ Please leave issues for any questions about the paper or the code.
 
 If you find our code or paper useful, please cite the paper ✨:
 ```
+@article{shu2024exploring,
+  title={Exploring the Alignment Landscape: LLMs and Geometric Deep Models in Protein Representation},
+  author={Shu, Dong and Duan, Bingbing and Guo, Kai and Zhou, Kaixiong and Tang, Jiliang and Du, Mengnan},
+  journal={arXiv preprint arXiv:2411.05316},
+  year={2024}
+}
 ```
 
 ![image](https://github.com/user-attachments/assets/f785c1ea-e7ba-4d65-9cd8-77b135766ebe)
@@ -230,5 +238,10 @@ If you have any question or suggestion related to this project, feel free to ope
 If you find this repository useful, please consider giving a star ⭐ and citation
 
 ```
-
+@article{shu2024exploring,
+  title={Exploring the Alignment Landscape: LLMs and Geometric Deep Models in Protein Representation},
+  author={Shu, Dong and Duan, Bingbing and Guo, Kai and Zhou, Kaixiong and Tang, Jiliang and Du, Mengnan},
+  journal={arXiv preprint arXiv:2411.05316},
+  year={2024}
+}
 ```
